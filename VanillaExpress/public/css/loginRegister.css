@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.body {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Ubuntu, sans-serif;
+    background: linear-gradient(45deg, #cd25df, #2ced26);
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 1.5rem;
+    width: 25rem;
+    border-radius: 1rem;
+}
+
+.login-container h1 {
+    font-size: 3rem;
+}
+
+.oauth2-login-container {
+    display: flex;
+    grid-gap: .5rem;
+    margin: 1.5rem;
+    width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: #131313;
+}
+
+.oauth2-btn {
+    padding: .4rem 1rem;
+    display: flex;
+    grid-gap: .2rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #606060;
+    border-radius: 5px;
+    width: 100%;
+    text-wrap: nowrap;
+    transition: background-color 0.2s ease;
+}
+
+.oauth2-btn:hover {
+    background-color: #cad5e2;
+}
+
+.oauth2-btn svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: block;
+}
+
+.login-form  {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    grid-gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    grid-gap: .3rem;
+}
+
+.field-group input {
+    padding: .5rem;
+    font-size: 1rem;
+    outline: none;
+    border: 1px solid #ccc;
+    border-radius: .5rem;
+}
+
+.login-btn {
+    padding: .6rem 0;
+    font-size: 1.2rem;
+    background-color: #3d95d8;
+    border: none;
+    border-radius: .4rem;
+    color: white;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+}
+
+.login-btn:hover {
+    background-color: #2870a8;
+}
+
+.alternative {
+    font-size: .9rem;
+    color: #555555;
+}
+
+.alternative a {
+    color: #a21bb1;
+    font-weight: bold;
+}
+
+.alternative a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: red;
+    font-size: .8rem;
+}
