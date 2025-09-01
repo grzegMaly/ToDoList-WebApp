@@ -17,13 +17,11 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: [true, "Password is required"],
         minLength: [12, "Password's length must be at least 12 characters"],
         select: false
     },
     passwordConfirm: {
         type: String,
-        required: [true, "Password confirm is required"],
         validate: {
             validator: function (el) {
                 return el === this.password;
@@ -54,6 +52,11 @@ const userSchema = new Schema({
     accountExpiryDate: {
         type: Date,
         default: () => new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+    },
+    loginMethod: {
+        type: String,
+        enum: ['email', 'github', 'google'],
+        default: 'email'
     },
     roles: {
         type: [String],

@@ -3,3 +3,5 @@
 /.idea/php.xml
 /.idea/VanillaExpress.iml
 /.idea/vcs.xml
+/oauthData.txt
+/config.env
