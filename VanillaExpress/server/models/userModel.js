@@ -58,6 +58,12 @@ const userSchema = new Schema({
         enum: ['email', 'github', 'google'],
         default: 'email'
     },
+    providerId: {
+        type: String,
+        required: function () {
+            return this.loginMethod !== 'email';
+        },
+    },
     roles: {
         type: [String],
         default: ["ROLE_USER"]
