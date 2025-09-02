@@ -71,6 +71,53 @@ class AuthController {
         }
     }
 
+    protectPage = (req, res, next) => {
+
+        const cookieName = this.#tokenGenerator.cookieName();
+        const cookie = req.cookies?.[cookieName];
+
+        if (!cookie) {
+            res.clearCookie(cookieName);
+            return res.redirect('/login');
+        }
+    }
+
+    me = async (req, res, next) => {
+        const cookieName = this.#tokenGenerator.cookieName();
+        const cookie = req.cookies?.[cookieName];
+
+        if (!cookie) {
+            return this.sendUnauthorized(res);
+        }
+
+        let payload;
+        try {
+            payload = this.#tokenGenerator.verify(cookie);
+        } catch (err) {
+            return this.sendUnauthorized(res);
+        }
+
+        const id = payload.sub;
+        const user = await UserModel.findById(id);
+
+        if (!user) {
+            return this.sendUnauthorized(res);
+        }
+
+        res.status(200)
+            .json({
+                id: user._id,
+                username: user.username,
+                roles: user.roles
+            });
+    }
+
+    sendUnauthorized = (res) => {
+        res.clearCookie(this.#tokenGenerator.cookieName());
+        return res.status(401)
+            .send("Unauthorized");
+    }
+
     githubAuth = async (req, res) => {
         const state = OAuth2GitHub.generateOAuthStateCookie(res);
         const uri = OAuth2GitHub.providerAuth().code.getUri({state})
