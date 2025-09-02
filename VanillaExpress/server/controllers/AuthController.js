@@ -96,6 +96,20 @@ class AuthController {
         }
     }
 
+    protectRoute = async (req, res, next) => {
+        try {
+            const id = await this.#validateAndGetId(req);
+            const user = await UserModel.findById(id);
+            if (!user) {
+                return this.#sendUnauthorized(res);
+            }
+            req.user = user;
+            next();
+        } catch (error) {
+            return this.#sendUnauthorized(res);
+        }
+    }
+
     me = async (req, res) => {
         try {
             const id = await this.#validateAndGetId(req, res);

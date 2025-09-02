@@ -3,6 +3,6 @@ export const api = async (path, {method = "GET", body = undefined, headers, cred
         method,
         headers,
         credentials,
-        body: body ? JSON.stringify(body) : undefined
+        body: typeof body === 'object' ? JSON.stringify(body) : undefined
     });
 }
