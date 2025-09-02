@@ -1,5 +1,5 @@
 const UserModel = require('../../models/userModel');
-const TokenGenerator = require('../TokenGenerator');
+const TokenGenerator = require('./TokenGenerator');
 
 class OAuth2Base {
 

@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const UserModel = require('../models/userModel');
-const SignupRequest = require('../classes/SignupRequest');
-const LoginResponse = require('../classes/LoginResponse');
-const ApiResponse = require('../classes/ApiResponse');
-const LoginRequest = require('../classes/LoginRequest');
-const TokenGenerator = require('../classes/TokenGenerator');
+const SignupRequest = require('../classes/requestResponse/SignupRequest');
+const LoginResponse = require('../classes/requestResponse/LoginResponse');
+const ApiResponse = require('../classes/requestResponse/ApiResponse');
+const LoginRequest = require('../classes/requestResponse/LoginRequest');
+const TokenGenerator = require('../classes/security/TokenGenerator');
 const OAuth2Google = require('../classes/security/OAuth2Google');
 const OAuth2GitHub = require('../classes/security/OAuth2GitHub');
 
