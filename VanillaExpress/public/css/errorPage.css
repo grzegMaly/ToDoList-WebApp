@@ -1,0 +1,51 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: Ubuntu, sans-serif;
+}
+
+.main {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #454545;
+    color: white;
+}
+
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-container * {
+    margin-bottom: 1.5rem;
+}
+
+h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    font-size: 1.5rem;
+}
+
+a {
+    text-decoration: none;
+    font-size: 1.3rem;
+    display: block;
+    padding: 1rem 2rem;
+    background-color: #6066e1;
+    border-radius: .5rem;
+    font-weight: bold;
+    color: #ccc;
+}
+
+a:hover {
+    background-color: #747ad8;
+}

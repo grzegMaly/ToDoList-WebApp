@@ -1,3 +1,10 @@
+// import {api} from "./utils/api.js";
+import {validate} from "./utils/validateLoggedInUser.js";
+
+if (!validate()) {
+    window.location.assign('/login');
+}
+
 const formEl = document.querySelector(".form");
 const inputEl = document.querySelector(".input");
 const listEl = document.querySelector("ul");

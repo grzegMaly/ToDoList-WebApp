@@ -41,7 +41,7 @@ class OAuth2Base {
         const expected = req.cookies?.['oauth_state'];
         const received = req.query.state;
         if (!expected || expected !== received) {
-            return res.status(400).send("Invalid OAuth state");
+            return res.redirect('error');
         }
     }
 

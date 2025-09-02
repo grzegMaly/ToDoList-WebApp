@@ -8,9 +8,10 @@ class ViewsController {
     }
 
     #getPage = (res, next, pageName, status = 200) => {
-        const page = path.join(this.#htmlPath, pageName);
+        const page = `${pageName}.html`
+        const html = path.join(this.#htmlPath, page);
         return res.status(status)
-            .sendFile(page, err => {
+            .sendFile(html, err => {
                 if (err) {
                     next(err);
                 }
@@ -18,15 +19,27 @@ class ViewsController {
     }
 
     getLoginPage = (req, res, next) => {
-        return this.#getPage(res, next,'login.html');
+        return this.#getPage(res, next,'login');
     }
 
     getRegisterPage = (req, res, next) => {
-        return this.#getPage(res, next,'register.html');
+        return this.#getPage(res, next,'register');
+    }
+
+    getHomePage = (req, res, next) => {
+        return this.#getPage(res, next, 'homePage');
+    }
+
+    getMainPage = (req, res, next) => {
+        return this.#getPage(res, next, 'todoPage');
     }
 
     getNotFoundPage = (req, res, next) => {
-        return this.#getPage(res, next,  'notFoundPage.html', 404);
+        return this.#getPage(res, next,  'notFoundPage', 404);
+    }
+
+    getErrorPage = (req, res, next) => {
+        return this.#getPage(res, next, 'errorPage')
     }
 }
 

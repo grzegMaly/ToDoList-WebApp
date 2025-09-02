@@ -1,4 +1,10 @@
 import {api} from "./utils/api.js";
+import {validate} from "./utils/validateLoggedInUser.js";
+import {saveUser} from "./utils/storeUser.js";
+
+if (validate()) {
+    window.location.assign('/todo-list');
+}
 
 const formEl = document.querySelector('form');
 const nameEl = document.getElementById('username');
@@ -129,6 +135,8 @@ const handleSend = async () => {
     }
 
     if (res.ok) {
+        const resData = await res.json();
+        saveUser(resData.data);
         window.location.assign('/todo-list');
     }
 }
