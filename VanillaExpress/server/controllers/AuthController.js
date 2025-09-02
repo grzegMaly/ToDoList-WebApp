@@ -71,7 +71,7 @@ class AuthController {
         }
     }
 
-    #validateAndGetId = async (req, res) => {
+    #validateAndGetId = async (req) => {
         const cookieName = this.#tokenGenerator.cookieName();
         const token = req.cookies?.[cookieName];
 
