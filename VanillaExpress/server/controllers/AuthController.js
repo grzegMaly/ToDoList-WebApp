@@ -71,52 +71,55 @@ class AuthController {
         }
     }
 
-    protectPage = (req, res, next) => {
-
+    #validateAndGetId = async (req, res) => {
         const cookieName = this.#tokenGenerator.cookieName();
-        const cookie = req.cookies?.[cookieName];
+        const token = req.cookies?.[cookieName];
 
-        if (!cookie) {
-            res.clearCookie(cookieName);
-            return res.redirect('/login');
+        if (!token) {
+            throw new Error("Unauthorized");
         }
+
+        const payload = this.#tokenGenerator.verify(token);
+        return payload.sub;
     }
 
-    me = async (req, res, next) => {
-        const cookieName = this.#tokenGenerator.cookieName();
-        const cookie = req.cookies?.[cookieName];
-
-        if (!cookie) {
-            return this.sendUnauthorized(res);
-        }
-
-        let payload;
+    protectPage = async (req, res, next) => {
         try {
-            payload = this.#tokenGenerator.verify(cookie);
-        } catch (err) {
-            return this.sendUnauthorized(res);
+            const id = await this.#validateAndGetId(req, res);
+            const exists = await UserModel.exists({_id: id});
+            if (!exists) {
+                return this.#sendUnauthorized(res);
+            }
+            next();
+        } catch (Error) {
+            return this.#sendUnauthorized(res);
         }
-
-        const id = payload.sub;
-        const user = await UserModel.findById(id);
-
-        if (!user) {
-            return this.sendUnauthorized(res);
-        }
-
-        res.status(200)
-            .json({
-                id: user._id,
-                username: user.username,
-                roles: user.roles
-            });
     }
 
-    sendUnauthorized = (res) => {
+    me = async (req, res) => {
+        try {
+            const id = await this.#validateAndGetId(req, res);
+            const user = await UserModel.findById(id);
+
+            if (!user) {
+                return this.#sendUnauthorized(res);
+            }
+            res.status(200)
+                .json({
+                    id: user._id,
+                    username: user.username,
+                    roles: user.roles
+                });
+        } catch (error) {
+            return this.#sendUnauthorized(res);
+        }
+    }
+
+    #sendUnauthorized = (res) => {
         res.clearCookie(this.#tokenGenerator.cookieName());
-        return res.status(401)
-            .send("Unauthorized");
+        return res.redirect('/login');
     }
+
 
     githubAuth = async (req, res) => {
         const state = OAuth2GitHub.generateOAuthStateCookie(res);
