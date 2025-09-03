@@ -11,7 +11,9 @@ import com.todolist.backend.security.request.LoginRequest;
 import com.todolist.backend.security.request.SignupRequest;
 import com.todolist.backend.security.response.LoginResponse;
 import com.todolist.backend.security.services.AuthUserDetails;
+import com.todolist.backend.utils.EmailSender;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -29,6 +31,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
+    private final EmailSender emailSender;
+    @Value("${app.mail.greetings}")
+    private String greetingsMessage;
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
@@ -104,6 +110,7 @@ public class AuthServiceImpl implements AuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
 
+        emailSender.sendGreetingsMail(userDetails.email(), greetingsMessage);
         LoginResponse response = new LoginResponse(userDetails.getUserId(), userDetails.getUsername(), roles);
         return new ResponseEntity<>(
                 new ApiResponse<>(201, "Registered successfully", response),
