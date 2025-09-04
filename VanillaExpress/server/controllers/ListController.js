@@ -66,10 +66,8 @@ class ListController {
 
     deleteListDoc = async (req, res, next) => {
 
-        console.log("DUUUUUUPPAAAA")
         const {listId} = req.params;
         const {user} = req;
-        console.log(listId, "DELETE")
 
         try {
             const result = await ListModel.deleteOne({_id: new ObjectId(listId), ownerId: user._id});

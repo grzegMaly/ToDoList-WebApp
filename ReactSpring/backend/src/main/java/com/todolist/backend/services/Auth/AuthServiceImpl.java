@@ -9,7 +9,7 @@ import com.todolist.backend.response.ApiResponse;
 import com.todolist.backend.security.jwt.JwtUtils;
 import com.todolist.backend.security.request.LoginRequest;
 import com.todolist.backend.security.request.SignupRequest;
-import com.todolist.backend.security.response.LoginResponse;
+import com.todolist.backend.security.response.UserInfoResponse;
 import com.todolist.backend.security.services.AuthUserDetails;
 import com.todolist.backend.utils.EmailSender;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
 
     @Override
-    public ResponseEntity<ApiResponse<LoginResponse>> authenticate(LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<UserInfoResponse>> authenticate(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        LoginResponse response = new LoginResponse(
+        UserInfoResponse response = new UserInfoResponse(
                 userDetails.getUserId(),
                 userDetails.username(),
                 roles
@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<LoginResponse>> register(SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<UserInfoResponse>> register(SignupRequest signupRequest) {
 
         if (userRepository.existsUserByEmail(signupRequest.getEmail())) {
             throw new RuntimeException("Email already exists");
@@ -111,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
         headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
 
         emailSender.sendGreetingsMail(userDetails.email(), greetingsMessage);
-        LoginResponse response = new LoginResponse(userDetails.getUserId(), userDetails.getUsername(), roles);
+        UserInfoResponse response = new UserInfoResponse(userDetails.getUserId(), userDetails.getUsername(), roles);
         return new ResponseEntity<>(
                 new ApiResponse<>(201, "Registered successfully", response),
                 headers,
