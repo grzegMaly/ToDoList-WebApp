@@ -6,14 +6,13 @@ const api = axios.create({
         "Content-Type": "application/json"
     },
     timeout: 15_000,
+    withCredentials: true
 });
 
 const getCsrfToken = async () => {
+
+    const response = await api.get(`/csrf`);
     try {
-        const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/v1/csrf`,
-            {withCredentials: true}
-        );
         return {
             header: response.data.headerName,
             token: response.data.token
@@ -27,8 +26,9 @@ const getCsrfToken = async () => {
 api.interceptors.request.use(
     async (config) => {
         const method = config.method.toUpperCase();
-        const csrfMethods = ["POST", "PUT", "PATCH", "DELETE"];
-        if (csrfMethods.includes(method)) {
+        const protectedMethods = ["POST", "PUT", "PATCH", "DELETE"];
+        const isPublicEndpoint = config.url.includes("/auth/public") || config.url.includes('/oauth2');
+        if (protectedMethods.includes(method) && !isPublicEndpoint) {
             const csrf = await getCsrfToken();
             if (csrf?.header && csrf?.token) {
                 config.headers[csrf.header] = csrf.token;

@@ -16,6 +16,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -39,7 +40,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable)
+
+        var csrfRequestHandler = new CsrfTokenRequestAttributeHandler();
+        csrfRequestHandler.setCsrfRequestAttributeName(null);
+
+        return http
+                .csrf(csrf ->
+                        csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                                .csrfTokenRequestHandler(csrfRequestHandler)
+                                .ignoringRequestMatchers("/public/**")
+                                .ignoringRequestMatchers("/auth/public/**"))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -50,17 +60,12 @@ public class SecurityConfig {
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint(authenticationEntryPoint))
-                .csrf(csrf ->
-                        csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                                .ignoringRequestMatchers("/public/**")
-                                .ignoringRequestMatchers("/auth/public/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/public/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/me").hasRole("USER")
                         .anyRequest().authenticated())
-
                 .build();
     }
 }

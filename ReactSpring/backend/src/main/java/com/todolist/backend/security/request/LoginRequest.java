@@ -13,8 +13,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class LoginRequest {
 
-    @NotBlank
     @Email
+    @NotBlank
     private String email;
+
     private String password;
 }

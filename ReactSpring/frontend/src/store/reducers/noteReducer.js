@@ -9,7 +9,7 @@ export const getNotes = createAsyncThunk(
         fulfillWithValue
     }) => {
         try {
-            const response = api.get("/lists", {withCredentials: true});
+            const response = await api.get("/lists", {withCredentials: true});
             return fulfillWithValue(response)
         } catch (error) {
             console.log(error.response);
@@ -18,13 +18,13 @@ export const getNotes = createAsyncThunk(
     }
 );
 export const createNote = createAsyncThunk(
-    "notes/",
+    "notes/createNote",
     async (noteData, {
         rejectWithValue,
         fulfillWithValue
     }) => {
         try {
-            const response = api.post("/lists", noteData, {withCredentials: true});
+            const response = await api.post("/lists", noteData, {withCredentials: true});
             return fulfillWithValue(response);
         } catch (error) {
             console.log(error.response);
@@ -33,13 +33,13 @@ export const createNote = createAsyncThunk(
     }
 );
 export const updateNote = createAsyncThunk(
-    "notes/",
+    "notes/updateNote",
     async ({toDoId, done}, {
         rejectWithValue,
         fulfillWithValue
     }) => {
         try {
-            const response = api.patch(`/lists/${toDoId}`, done, {withCredentials: true});
+            const response = await api.patch(`/lists/${toDoId}`, {done}, {withCredentials: true});
             return fulfillWithValue(response);
         } catch (error) {
             console.log(error.response);
@@ -48,13 +48,13 @@ export const updateNote = createAsyncThunk(
     }
 );
 export const deleteNote = createAsyncThunk(
-    "notes/",
+    "notes/deleteNote",
     async ({toDoId}, {
         rejectWithValue,
         fulfillWithValue
     }) => {
         try {
-            const response = api.delete(`/lists/${toDoId}`, {withCredentials: true});
+            const response = await api.delete(`/lists/${toDoId}`, {withCredentials: true});
             return fulfillWithValue(response);
         } catch (error) {
             console.log(error.response);
@@ -76,7 +76,28 @@ export const noteReducer = createSlice({
             state.successMessage = '';
         },
     },
-    extraReducers: builder => {}
+    extraReducers: builder => {
+        builder
+            .addCase(getNotes.fulfilled, (state, {payload}) => {
+                state.notes = payload.data;
+            })
+            .addCase(createNote.fulfilled, (state, {payload}) => {
+                state.notes.push(payload.data);
+                localStorage.setItem("LIST", JSON.stringify(state.notes));
+            })
+            .addCase(updateNote.fulfilled, (state, {payload}) => {
+                const note = state.notes.find(n => n.toDoId === payload.data.toDoId);
+                if (note) {
+                    note.done = payload.data.done;
+                    localStorage.setItem("LIST", JSON.stringify(state.notes));
+                }
+            })
+            .addCase(deleteNote.fulfilled, (state, action) => {
+                const {toDoId} = action.meta.arg;
+                state.notes = state.notes.filter(n => n.toDoId !== toDoId);
+                localStorage.setItem("LIST", JSON.stringify(state.notes));
+            })
+    }
 });
 
 export const {messageClear} = authReducer.actions;

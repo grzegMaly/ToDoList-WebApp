@@ -15,7 +15,7 @@ export const login = createAsyncThunk(
             return rejectWithValue(error.response.data)
         }
     });
-export const register = createAsyncThunk(
+export const registerUser = createAsyncThunk(
     "auth/register",
     async (registerInfo, {
         fulfillWithValue,
@@ -37,7 +37,7 @@ export const me = createAsyncThunk(
         rejectWithValue
     }) => {
         try {
-            const response = api.get("/auth/me", {withCredentials: true});
+            const response = await api.get("/auth/me", {withCredentials: true});
             return fulfillWithValue(response);
         } catch (error) {
             console.log(error.response);
@@ -49,7 +49,11 @@ export const me = createAsyncThunk(
 export const authReducer = createSlice({
     name: "auth",
     initialState: {
-        user: JSON.parse(localStorage.getItem("USER")) || null,
+        user: JSON.parse(localStorage.getItem("USER")) || {
+            id: null,
+            username: null,
+            roles: null
+        },
         isLoading: false,
         errorMessage: '',
         successMessage: '',
@@ -66,23 +70,26 @@ export const authReducer = createSlice({
                 state.isLoading = true;
             })
             .addCase(login.fulfilled, (state, {payload}) => {
-                state.message = payload.message;
-                state.user = payload.data;
+                state.successMessage = payload.data.message;
+                state.user = payload.data.data;
                 state.isLoading = false;
+                localStorage.setItem("USER", JSON.stringify(state.user));
             })
             .addCase(login.rejected, (state, {payload}) => {
                 state.errorMessage = payload.message;
                 state.isLoading = false;
+                console.log("rejected:", payload)
             })
-            .addCase(register.pending, state => {
+            .addCase(registerUser.pending, state => {
                 state.isLoading = true;
             })
-            .addCase(register.fulfilled, (state, {payload}) => {
-                state.message = payload.message;
-                state.user = payload.data;
+            .addCase(registerUser.fulfilled, (state, {payload}) => {
+                state.successMessage = payload.data.message;
+                state.user = payload.data.data;
                 state.isLoading = false;
+                localStorage.setItem("USER", JSON.stringify(state.user));
             })
-            .addCase(register.rejected, (state, {payload}) => {
+            .addCase(registerUser.rejected, (state, {payload}) => {
                 state.errorMessage = payload.message;
                 state.isLoading = false;
             })
@@ -90,7 +97,7 @@ export const authReducer = createSlice({
                 state.isLoading = true;
             })
             .addCase(me.fulfilled, (state, {payload}) => {
-                state.user = payload
+                state.user = payload.data
                 localStorage.setItem("USER", JSON.stringify(state.user))
                 state.isLoading = false;
             })

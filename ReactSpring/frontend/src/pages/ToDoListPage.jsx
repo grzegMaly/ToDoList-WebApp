@@ -28,6 +28,7 @@ export const ToDoListPage = () => {
         setNote({...note, content: note.content.trim()})
         if (note.content) {
             dispatch(createNote(note));
+            setNote(prev => ({...prev, content: ""}))
         }
     }
 
@@ -59,7 +60,7 @@ export const ToDoListPage = () => {
                             key={note.toDoId}
                             className={`px-4 py-2 flex justify-between items-center`}
                         >
-                            <span className={note.done && "line-through text-slate-600"}>{note.content}</span>
+                            <span className={`${note.done && "line-through text-slate-400"}`}>{note.content}</span>
                             <div className={`flex gap-3`}>
                                 <FaCheck size={23}
                                          onClick={() => handleUpdateDone(note)}
